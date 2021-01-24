@@ -1,0 +1,33 @@
+{
+	"id": "nodebb-plugin-amaurot",
+	"url": "https://github.com/luminisward/nodebb-plugin-amaurot",
+	"library": "./library.js",
+	"hooks": [
+		{
+			"hook": "static:app.load", "method": "init"
+		},
+		{
+			"hook": "static:api.routes", "method": "addRoutes"
+		},
+		{
+			"hook": "filter:admin.header.build", "method": "addAdminNavigation"
+		},
+		{
+			"hook": "filter:topic.thread_tools", "method": "addThreadTools"
+		}
+	],
+	"staticDirs": {
+		"static": "./static"
+	},
+	"less": [
+		"static/style.less"
+	],
+	"scripts": [
+		"static/lib/main.js"
+	],
+	"acpScripts": [
+		"static/lib/admin.js"
+	],
+  "templates": "static/templates",
+  "languages": "languages"
+}
