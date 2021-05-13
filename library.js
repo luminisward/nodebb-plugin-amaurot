@@ -45,15 +45,15 @@ plugin.init = function (params, callback) {
  *	}
  */
 plugin.addRoutes = async ({ router, middleware, helpers }) => {
-	router.put('/amaurot/topic/:tid/recommend', middleware.authenticate, async (req, res) => {
+	router.put('/amaurot/topic/:tid/totem', middleware.authenticate, async (req, res) => {
 		const tid = req.params.tid;
-		await topics.setTopicField(tid, 'recommend', true);
+		await topics.setTopicField(tid, 'totem', true);
 		helpers.formatApiResponse(200, res);
 	});
 
-	router.delete('/amaurot/topic/:tid/recommend', middleware.authenticate, async (req, res) => {
+	router.delete('/amaurot/topic/:tid/totem', middleware.authenticate, async (req, res) => {
 		const tid = req.params.tid;
-		await topics.deleteTopicField(tid, 'recommend');
+		await topics.deleteTopicField(tid, 'totem');
 		helpers.formatApiResponse(200, res);
 	});
 };
@@ -69,16 +69,19 @@ plugin.addAdminNavigation = function (header, callback) {
 };
 
 plugin.addThreadTools = async (data) => {
-	data.tools.push({
-		class: 'toggle-recommend',
-		title: '[[amaurot:set_recommend]]',
+	const { topic, tools } = data;
+
+	tools.push({
+		class: `amaurot-set-totem ${topic.totem ? 'hidden' : ''}`,
+		title: '[[amaurot:set_totem]]',
 		icon: 'fa-question-circle',
 	});
-	data.tools.push({
-		class: 'toggle-recommend',
-		title: '[[amaurot:remove_recommend]]',
+	tools.push({
+		class: `amaurot-remove-totem ${topic.totem ? '' : 'hidden'}`,
+		title: '[[amaurot:remove_totem]]',
 		icon: 'fa-question-circle',
 	});
+
 	return data;
 };
 

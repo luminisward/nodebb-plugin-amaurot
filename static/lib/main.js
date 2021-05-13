@@ -1,6 +1,6 @@
 'use strict';
 
-/* globals document, $ */
+/* globals document, window $ ajaxify app */
 
 $(document).ready(function () {
 	/*
@@ -14,7 +14,35 @@ $(document).ready(function () {
 		$(document).ready();			Fired when the DOM is ready
 		$(window).on('action:ajaxify.end', function(data) { ... });			"data" contains "url"
 	*/
-
 	console.log('nodebb-plugin-amaurot: loaded');
+
+	require(['api'], function (api) {
+		$(window).on('action:topic.tools.load', function (_, { element }) {
+			const setTotemButton = element.find('.amaurot-set-totem');
+			const removeTotemButton = element.find('.amaurot-remove-totem');
+
+			const toggleHidden = () => {
+				setTotemButton.toggleClass('hidden');
+				removeTotemButton.toggleClass('hidden');
+			};
+
+			const tid = ajaxify.data.tid;
+
+			setTotemButton.click(() => {
+				api.put(`/plugins/amaurot/topic/${tid}/totem`, {})
+					.then(() => {
+						app.alertSuccess();
+						toggleHidden();
+					});
+			});
+			removeTotemButton.click(() => {
+				api.del(`/plugins/amaurot/topic/${tid}/totem`, {})
+					.then(() => {
+						app.alertSuccess();
+						toggleHidden();
+					});
+			});
+		});
+	});
 	// Note how this is shown in the console on the first load of every page
 });
