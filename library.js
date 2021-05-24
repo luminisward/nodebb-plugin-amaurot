@@ -1,22 +1,15 @@
 'use strict';
 
-const controllers = require('./lib/controllers');
-const topics = require.main.require('./src/topics');
+const addPageRoutes = require('./routes/pageRoutes');
+const addApiRoutes = require('./routes/apiRoutes');
 
 const plugin = {};
 
-plugin.init = function (params, callback) {
-	const router = params.router;
-	const hostMiddleware = params.middleware;
-	// const hostControllers = params.controllers;
-
+plugin.init = async ({ /* app, */ router, middleware /* , controllers */ }) => {
 	// We create two routes for every view. One API call, and the actual route itself.
 	// Just add the buildHeader middleware to your route and NodeBB will take care of everything for you.
 
-	router.get('/admin/plugins/amaurot', hostMiddleware.admin.buildHeader, controllers.renderAdminPage);
-	router.get('/api/admin/plugins/amaurot', controllers.renderAdminPage);
-
-	callback();
+	await addPageRoutes({ router, middleware });
 };
 
 /**
@@ -45,17 +38,7 @@ plugin.init = function (params, callback) {
  *	}
  */
 plugin.addRoutes = async ({ router, middleware, helpers }) => {
-	router.put('/amaurot/topic/:tid/totem', middleware.authenticate, async (req, res) => {
-		const tid = req.params.tid;
-		await topics.setTopicField(tid, 'totem', true);
-		helpers.formatApiResponse(200, res);
-	});
-
-	router.delete('/amaurot/topic/:tid/totem', middleware.authenticate, async (req, res) => {
-		const tid = req.params.tid;
-		await topics.deleteTopicField(tid, 'totem');
-		helpers.formatApiResponse(200, res);
-	});
+	await addApiRoutes({ router, middleware, helpers });
 };
 
 plugin.addAdminNavigation = function (header, callback) {

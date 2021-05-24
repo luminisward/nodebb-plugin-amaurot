@@ -14,7 +14,6 @@ $(document).ready(function () {
 		$(document).ready();			Fired when the DOM is ready
 		$(window).on('action:ajaxify.end', function(data) { ... });			"data" contains "url"
 	*/
-	console.log('nodebb-plugin-amaurot: loaded');
 
 	require(['api'], function (api) {
 		$(window).on('action:topic.tools.load', function (_, { element }) {

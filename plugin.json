@@ -23,7 +23,8 @@
 		"static/style.less"
 	],
 	"scripts": [
-		"static/lib/main.js"
+		"static/lib/main.js",
+    "static/lib/totem.js"
 	],
 	"acpScripts": [
 		"static/lib/admin.js"
