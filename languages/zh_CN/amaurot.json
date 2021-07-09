@@ -2,5 +2,7 @@
   "set_totem": "加入精华",
   "remove_totem": "取消精华",
   "set_totem_success": "加入精华成功",
-  "remove_totem_success": "取消精华成功"
+  "remove_totem_success": "取消精华成功",
+  "move_directory": "移动",
+  "delete_directory": "删除"
 }

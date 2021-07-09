@@ -6,10 +6,10 @@ const addApiRoutes = require('./routes/apiRoutes');
 const plugin = {};
 
 plugin.init = async ({ /* app, */ router, middleware /* , controllers */ }) => {
-	// We create two routes for every view. One API call, and the actual route itself.
-	// Just add the buildHeader middleware to your route and NodeBB will take care of everything for you.
+  // We create two routes for every view. One API call, and the actual route itself.
+  // Just add the buildHeader middleware to your route and NodeBB will take care of everything for you.
 
-	await addPageRoutes({ router, middleware });
+  await addPageRoutes({ router, middleware });
 };
 
 /**
@@ -38,34 +38,34 @@ plugin.init = async ({ /* app, */ router, middleware /* , controllers */ }) => {
  *	}
  */
 plugin.addRoutes = async ({ router, middleware, helpers }) => {
-	await addApiRoutes({ router, middleware, helpers });
+  await addApiRoutes({ router, middleware, helpers });
 };
 
 plugin.addAdminNavigation = function (header, callback) {
-	header.plugins.push({
-		route: '/plugins/amaurot',
-		icon: 'fa-tint',
-		name: 'amaurot',
-	});
+  header.plugins.push({
+    route: '/plugins/amaurot',
+    icon: 'fa-tint',
+    name: 'amaurot',
+  });
 
-	callback(null, header);
+  callback(null, header);
 };
 
 plugin.addThreadTools = async (data) => {
-	const { topic, tools } = data;
+  const { topic, tools } = data;
 
-	tools.push({
-		class: `amaurot-set-totem ${topic.totem ? 'hidden' : ''}`,
-		title: '[[amaurot:set_totem]]',
-		icon: 'fa-question-circle',
-	});
-	tools.push({
-		class: `amaurot-remove-totem ${topic.totem ? '' : 'hidden'}`,
-		title: '[[amaurot:remove_totem]]',
-		icon: 'fa-question-circle',
-	});
+  tools.push({
+    class: `amaurot-set-totem ${topic.totem ? 'hidden' : ''}`,
+    title: '[[amaurot:set_totem]]',
+    icon: 'fa-question-circle',
+  });
+  tools.push({
+    class: `amaurot-remove-totem ${topic.totem ? '' : 'hidden'}`,
+    title: '[[amaurot:remove_totem]]',
+    icon: 'fa-question-circle',
+  });
 
-	return data;
+  return data;
 };
 
 module.exports = plugin;

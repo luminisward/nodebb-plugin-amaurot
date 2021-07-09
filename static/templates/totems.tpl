@@ -1,1 +1,1 @@
-<div component="totems/tree"></div>
+<div style="font-size: 18px;" component="totems/tree"></div>

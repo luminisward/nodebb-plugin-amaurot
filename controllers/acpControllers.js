@@ -3,7 +3,7 @@
 const Controllers = {};
 
 Controllers.renderAdminPage = function (req, res/* , next */) {
-	/*
+  /*
 		Make sure the route matches your path to template exactly.
 
 		If your route was:
@@ -14,7 +14,7 @@ Controllers.renderAdminPage = function (req, res/* , next */) {
 			res.render('some/complex/route');
 	*/
 
-	res.render('admin/plugins/amaurot', {});
+  res.render('admin/plugins/amaurot', {});
 };
 
 module.exports = Controllers;
