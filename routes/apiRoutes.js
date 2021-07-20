@@ -18,8 +18,28 @@ const addRoutes = async ({ router, middleware, helpers }) => {
   });
 
   router.get('/amaurot/category/:cid/totems', middleware.authenticate, async (req, res) => {
+    const { uid } = req;
+
+
+    const assignTopics = async (totemsList) => {
+      const tasks = [];
+      const _assignTopics = async (list) => {
+        for (const dir of list) {
+          if (dir.totems && dir.totems.length) {
+            tasks.push(
+              topics.getTopics(dir.totems, uid).then((r) => { dir.topics = r; })
+            );
+          }
+          _assignTopics(dir.subs);
+        }
+      };
+      _assignTopics(totemsList);
+      await Promise.all(tasks);
+    };
+
     const cid = req.params.cid;
     const responseData = await getTotemsTreeByCid(cid) || [];
+    await assignTopics(responseData);
     await helpers.formatApiResponse(200, res, responseData);
   });
 

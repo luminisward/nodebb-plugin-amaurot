@@ -6,11 +6,11 @@ $(document).ready(function () {
   const a = [
     {
       name: '目录1',
-      totems: ['totem1', 'totem2'],
+      totems: [1, 2],
       subs: [
         {
           name: '目录3',
-          totems: ['totem3', 'totem4'],
+          totems: [3, 4],
           subs: [],
         },
         {
@@ -68,13 +68,17 @@ $(document).ready(function () {
               .click(() => {
                 console.log('delete', dir);
               });
-            const toggleIcon = $('<div class="toggle"><i class="fa fa-minus"></i></div>')
+
+            const toggleIcon = $('<i style="font-size: 85%;" class="fa fa-minus"></i>');
+            const toggleIconContainer = $('<div style="width: 24px; height: 24px; border-radius: 50%;line-height: 24px; text-align: center; vertical-align: bottom; background-size: cover; float: left; margin-right: 0; cursor: pointer;"></div>')
+              .append(toggleIcon)
               .click(() => {
+                toggleIcon.toggleClass('fa-minus').toggleClass('fa-plus');
                 subsUlContainer.slideToggle();
               });
             const li = $('<li></li>')
               .addClass('name')
-              .append(toggleIcon)
+              .append(toggleIconContainer)
               .append(dir.name)
               .append(dropdown)
               .css('display', 'flex')
