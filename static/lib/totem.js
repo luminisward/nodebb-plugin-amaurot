@@ -3,47 +3,11 @@
 /* globals document, window $ ajaxify app */
 
 $(document).ready(function () {
-  const a = [
-    {
-      name: '目录1',
-      totems: [1, 2],
-      subs: [
-        {
-          name: '目录3',
-          totems: [3, 4],
-          subs: [],
-        },
-        {
-          name: '目录4',
-          totems: [],
-          subs: [
-            {
-              name: '目录5',
-              totems: [],
-              subs: [],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: '目录22134',
-      totems: [],
-      subs: [
-        {
-          name: '目录44',
-          totems: [],
-          subs: [],
-        },
-      ],
-    },
-  ];
-
   const parseAndTranslateAsync = (...params) => new Promise((resolve) => {
     app.parseAndTranslate(...params, resolve);
   });
 
-  require(['api'], function (api) {
+  require(['api', 'translator'], function (api, translator) {
     const updateTotemsTree = (cid, data) => api.put(`/plugins/amaurot/category/${cid}/totems`, { json: JSON.stringify(data) });
     const getTotemsTree = cid => api.get(`/plugins/amaurot/category/${cid}/totems`, {});
 
@@ -56,7 +20,7 @@ $(document).ready(function () {
         const recursiveCaller = async (subs) => {
           const ul = $('<ul></ul>');
           for (const dir of subs) {
-            const subsUlContainer = $('<div></div>');
+            const subsUlContainer = $('<div class="hidden"></div>');
             const dropdown = await parseAndTranslateAsync('partials/totems-dropdown', { });
             dropdown
               .find('[component="totems/move-button"]')
@@ -69,12 +33,12 @@ $(document).ready(function () {
                 console.log('delete', dir);
               });
 
-            const toggleIcon = $('<i style="font-size: 85%;" class="fa fa-minus"></i>');
+            const toggleIcon = $('<i style="font-size: 85%;" class="fa fa-plus"></i>');
             const toggleIconContainer = $('<div style="width: 24px; height: 24px; border-radius: 50%;line-height: 24px; text-align: center; vertical-align: bottom; background-size: cover; float: left; margin-right: 0; cursor: pointer;"></div>')
               .append(toggleIcon)
               .click(() => {
                 toggleIcon.toggleClass('fa-minus').toggleClass('fa-plus');
-                subsUlContainer.slideToggle();
+                subsUlContainer.toggleClass('hidden');
               });
             const li = $('<li></li>')
               .addClass('name')
@@ -87,31 +51,44 @@ $(document).ready(function () {
 
             ul.append(li);
 
-            if (dir.totems.length > 0) {
+            if (dir.topics && dir.topics.length > 0) {
               const subsUl = $('<ul></ul>');
-              for (const totem of dir.totems) {
+              for (const topic of dir.topics) {
                 const dropdown = await parseAndTranslateAsync('partials/totems-dropdown', { });
                 dropdown
                   .find('[component="totems/move-button"]')
                   .click(() => {
-                    console.log('move', totem);
+                    console.log('move', topic);
                   });
                 dropdown
                   .find('[component="totems/delete-button"]')
                   .click(() => {
-                    console.log('delete', totem);
+                    console.log('delete', topic);
                   });
 
                 const li = $('<li></li>')
                   .addClass('totem')
                   .css('list-style-type', 'none')
-                  .append(totem)
-                  .append(dropdown)
                   .css('display', 'flex');
+
+                if (topic.deleted) {
+                  li.css('opacity', '.3');
+                }
+
+                const title = await translator.translate(topic.title);
+                if (topic.noAnchor) {
+                  li.append(`<span>${title}</span>`);
+                } else {
+                  const link = $(`<a href="/topic/${topic.slug}/${topic.bookmark || ''}">${title}</a>`);
+                  li.append(link);
+                }
+
+                li.append(dropdown);
+
+
                 subsUl.append(li);
               }
               subsUlContainer.append(subsUl);
-              // ul.append(subsUl);
             }
             if (dir.subs.length > 0) {
               const subsUl = await recursiveCaller(dir.subs);
@@ -125,16 +102,16 @@ $(document).ready(function () {
 
 
 
-        const list = await recursiveCaller(treeData);
+        const listDom = await recursiveCaller(treeData);
         // edit btn
         // if (ajaxify.data.privileges.editable) {
 
         const btn2 = $('<a><button class="btn btn-default" type="button">精华区2</button></a>');
         btn2.click(() => {
-          updateTotemsTree(cid, a);
+          updateTotemsTree(cid, treeData);
         });
         $('[component="totems/tree"]').append(btn2);
-        $('[component="totems/tree"]').append(list);
+        $('[component="totems/tree"]').append(listDom);
         // }
       }
     });
