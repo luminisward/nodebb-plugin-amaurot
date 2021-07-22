@@ -7,15 +7,15 @@ const categories = require.main.require('./src/categories');
 const privileges = require.main.require('./src/privileges');
 
 
-const modifyTree = async (tree, childrenKey, asyncEffectFn) => {
+const modifyTree = async (treeNode, childrenKey, asyncEffectFn) => {
   const tasks = [];
-  const _modifyTree = async (list) => {
-    for (const dir of list) {
-      tasks.push(asyncEffectFn(dir));
-      _modifyTree(dir[childrenKey]);
+  const _modifyTree = async (node) => {
+    tasks.push(asyncEffectFn(node));
+    for (const childNode of node[childrenKey]) {
+      _modifyTree(childNode);
     }
   };
-  _modifyTree(tree);
+  _modifyTree(treeNode);
   await Promise.all(tasks);
 };
 
@@ -71,17 +71,10 @@ const addRoutes = async ({ router, middleware, helpers }) => {
     }
 
 
-    if (!Array.isArray(totemsData)) {
-      await helpers.formatApiResponse(400, res, new Error('Data is not array'));
-      return;
-    }
-
-    await modifyTree(totemsData, 'subs', async (dir) => {
-      if (dir.topics && dir.topics.length) {
-        dir.totems = dir.topics.map(topic => topic.tid);
-        delete dir.topics;
-      }
-    });
+    // if (!Array.isArray(totemsData)) {
+    //   await helpers.formatApiResponse(400, res, new Error('Data is not array'));
+    //   return;
+    // }
 
     await setTotemsTreeByCid(cid, totemsData);
     await helpers.formatApiResponse(200, res);
